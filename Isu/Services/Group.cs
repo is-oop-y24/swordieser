@@ -28,8 +28,11 @@ namespace Isu.Services
             int courseNumber = int.Parse(name.Substring(2, 1));
             int groupNumber = int.Parse(name.Substring(3, 2));
             if (!name[..2].Equals(CourseName) ||
-                courseNumber is < 1 or > 4 ||
-                groupNumber is < 0 or > 15)
+
+                // courseNumber is < 1 or > 4 ||
+                // groupNumber is < 0 or > 15
+                courseNumber < 1 || courseNumber > 4 ||
+                groupNumber < 0 || groupNumber > 15)
             {
                 throw new InvalidGroupNameException();
             }
