@@ -133,7 +133,7 @@ namespace Isu.Services
                 throw new MaxStudentPerGroupException();
             }
 
-            Group firstGroup = FindGroup(student.Group.GroupName);
+            Group firstGroup = student.Group;
             firstGroup.Students.Remove(student);
             newGroup.Students.Add(student);
             student.Group = newGroup;
