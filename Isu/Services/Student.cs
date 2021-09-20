@@ -21,7 +21,7 @@
             get;
         }
 
-        public string Group
+        public Group Group
         {
             get;
             set;
