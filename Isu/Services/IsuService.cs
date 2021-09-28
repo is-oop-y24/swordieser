@@ -110,6 +110,7 @@ namespace Isu.Services
 
         public Group FindGroup(string groupName)
         {
+            Group.CheckGroupName(groupName);
             int courseNumber = CourseNumber.StringToIntNumber(groupName);
             foreach (Group group in _courses[courseNumber].Groups)
             {

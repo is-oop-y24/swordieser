@@ -22,6 +22,7 @@ namespace Isu.Services
 
         public static int StringToIntNumber(string name)
         {
+            Group.CheckGroupName(name);
             return int.Parse(name.Substring(2, 1)) - 1;
         }
     }
