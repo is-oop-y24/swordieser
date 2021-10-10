@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Isu.Tools;
 
 namespace Isu.Services
@@ -22,7 +23,20 @@ namespace Isu.Services
 
         public static int StringToIntNumber(string name)
         {
-            Group.CheckGroupName(name);
+            if (name.Length != 5)
+            {
+                throw new InvalidGroupNameException();
+            }
+
+            try
+            {
+                int temp = int.Parse(name.Substring(2, 1));
+            }
+            catch (Exception)
+            {
+                throw new InvalidGroupNameException();
+            }
+
             return int.Parse(name.Substring(2, 1)) - 1;
         }
     }
