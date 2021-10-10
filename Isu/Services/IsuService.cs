@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Isu.Tools;
 
 namespace Isu.Services
@@ -22,8 +21,8 @@ namespace Isu.Services
         public Group AddGroup(string name)
         {
             var newGroup = new Group(name);
-            int courseNumber = CourseNumber.StringToIntNumber(name);
-            foreach (Group group in _courses[courseNumber].Groups)
+            int courseNumber = int.Parse(name.Substring(2, 1));
+            foreach (Group group in _courses[courseNumber - 1].Groups)
             {
                 if (group.GroupName.Equals(name))
                 {
@@ -31,7 +30,7 @@ namespace Isu.Services
                 }
             }
 
-            _courses[courseNumber].Groups.Add(newGroup);
+            _courses[courseNumber - 1].Groups.Add(newGroup);
             return newGroup;
         }
 
@@ -39,8 +38,9 @@ namespace Isu.Services
         {
             if (group.Students.Count >= group.GroupLimit)
                 throw new MaxStudentPerGroupException();
-            var s = new Student(name, group);
+            var s = new Student(name);
             group.Students.Add(s);
+            s.Group = group;
             return s;
         }
 
@@ -50,7 +50,7 @@ namespace Isu.Services
             {
                 foreach (Group group in course.Groups)
                 {
-                    foreach (Student student in group.StudentsGroup.ToList())
+                    foreach (Student student in group.Students)
                     {
                         if (student.StudentId == id)
                         {
@@ -69,7 +69,7 @@ namespace Isu.Services
             {
                 foreach (Group group in course.Groups)
                 {
-                    foreach (Student student in group.StudentsGroup.ToList())
+                    foreach (Student student in group.Students)
                     {
                         if (student.Name == name)
                         {
@@ -84,13 +84,12 @@ namespace Isu.Services
 
         public List<Student> FindStudents(string groupName)
         {
-            Group.CheckGroupName(groupName);
-            int courseNumber = CourseNumber.StringToIntNumber(groupName);
-            foreach (Group group in _courses[courseNumber].Groups)
+            int courseNumber = int.Parse(groupName.Substring(2, 1));
+            foreach (Group group in _courses[courseNumber - 1].Groups)
             {
                 if (group.GroupName == groupName)
                 {
-                    return group.StudentsGroup.ToList();
+                    return group.Students;
                 }
             }
 
@@ -102,16 +101,16 @@ namespace Isu.Services
             var students = new List<Student>();
             foreach (Group group in courseNumber.Groups)
             {
-                students.AddRange(group.StudentsGroup.ToList());
+                students.AddRange(group.Students);
             }
 
-            return students;
+            return students.Count != 0 ? students : new List<Student>();
         }
 
         public Group FindGroup(string groupName)
         {
-            int courseNumber = CourseNumber.StringToIntNumber(groupName);
-            foreach (Group group in _courses[courseNumber].Groups)
+            int courseNumber = int.Parse(groupName.Substring(2, 1));
+            foreach (Group group in _courses[courseNumber - 1].Groups)
             {
                 if (group.GroupName == groupName)
                 {
@@ -124,7 +123,7 @@ namespace Isu.Services
 
         public List<Group> FindGroups(CourseNumber courseNumber)
         {
-            return courseNumber.Groups;
+            return courseNumber.Groups.Count != 0 ? courseNumber.Groups : new List<Group>();
         }
 
         public void ChangeStudentGroup(Student student, Group newGroup)
@@ -137,7 +136,7 @@ namespace Isu.Services
             Group firstGroup = student.Group;
             firstGroup.Students.Remove(student);
             newGroup.Students.Add(student);
-            student.ChangeGroup(newGroup);
+            student.Group = newGroup;
         }
     }
 }

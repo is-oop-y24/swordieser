@@ -10,29 +10,6 @@ namespace Isu.Services
 
         public Group(string name)
         {
-            CheckGroupName(name);
-            GroupName = name;
-            GroupLimit = 20;
-            Students = new List<Student>();
-            StudentsGroup = Students.AsReadOnly();
-        }
-
-        public List<Student> Students { get; }
-
-        public IReadOnlyList<Student> StudentsGroup { get; }
-
-        public string GroupName
-        {
-            get;
-        }
-
-        public int GroupLimit
-        {
-            get;
-        }
-
-        public static void CheckGroupName(string name)
-        {
             if (name.Length != 5)
             {
                 throw new InvalidGroupNameException();
@@ -42,22 +19,39 @@ namespace Isu.Services
             {
                 int temp = int.Parse(name.Substring(2, 1));
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 throw new InvalidGroupNameException();
             }
 
-            int courseNumber = CourseNumber.StringToIntNumber(name);
+            int courseNumber = int.Parse(name.Substring(2, 1));
             int groupNumber = int.Parse(name.Substring(3, 2));
             if (!name[..2].Equals(CourseName) ||
 
                 // courseNumber is < 1 or > 4 ||
                 // groupNumber is < 0 or > 15
-                courseNumber < 0 || courseNumber > 3 ||
+                courseNumber < 1 || courseNumber > 4 ||
                 groupNumber < 0 || groupNumber > 15)
             {
                 throw new InvalidGroupNameException();
             }
+
+            GroupName = name;
+            GroupLimit = 20;
+            Students = new List<Student>();
+        }
+
+        public List<Student> Students { get; }
+
+        public string GroupName
+        {
+            get;
+        }
+
+        public int GroupLimit
+        {
+            get;
         }
     }
 }

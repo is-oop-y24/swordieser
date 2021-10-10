@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Isu.Services;
 using Isu.Tools;
 using NUnit.Framework;
@@ -22,7 +20,7 @@ namespace Isu.Tests
         {
             Group group = _isuService.AddGroup("M3200");
             Student student = _isuService.AddStudent(group, "Taylor Swift");
-            Assert.Contains(student, group.StudentsGroup.ToList());
+            Assert.Contains(student, group.Students);
         }
 
         [Test]
@@ -68,7 +66,7 @@ namespace Isu.Tests
             Student student1 = _isuService.AddStudent(group1, "Meme Hehe");
             Student student2 = _isuService.AddStudent(group1, "Meme");
             _isuService.ChangeStudentGroup(student, group2);
-            Assert.IsFalse(group1.StudentsGroup.ToList().Contains(student));
+            Assert.IsFalse(group1.Students.Contains(student));
         }
     }
 }

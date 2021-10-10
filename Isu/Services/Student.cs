@@ -4,12 +4,11 @@
     {
         private static int _id = 100000;
 
-        public Student(string name, Group group)
+        public Student(string name)
         {
             Name = name;
             StudentId = _id;
             _id++;
-            Group = group;
         }
 
         public string Name
@@ -25,12 +24,7 @@
         public Group Group
         {
             get;
-            private set;
-        }
-
-        public void ChangeGroup(Group newGroup)
-        {
-            Group = newGroup;
+            set;
         }
     }
 }
