@@ -8,7 +8,7 @@ namespace Isu
     {
         private static void Main()
         {
-            /*IIsuService isuService = new IsuService();
+            IIsuService isuService = new IsuService();
             Group group1 = isuService.AddGroup("M3201");
             Group group2 = isuService.AddGroup("M3202");
             Student student = isuService.AddStudent(group1, "Me Me Me");
@@ -16,7 +16,6 @@ namespace Isu
             Assert.IsFalse(group1.
                 Students.
                 Contains(student));
-                */
         }
     }
 }
