@@ -11,16 +11,14 @@ namespace Isu.Tests
         [SetUp]
         public void Setup()
         {
-            //done: implement
-            _isuService = new IsuService();
+            //TODO: implement
+            _isuService = null;
         }
 
         [Test]
         public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
         {
-            Group group = _isuService.AddGroup("M3200");
-            Student student = _isuService.AddStudent(group, "Taylor Swift");
-            Assert.Contains(student, group.Students);
+            Assert.Fail();
         }
 
         [Test]
@@ -28,11 +26,7 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-                var group = new Group("M3100");
-                for (int i = 0; i < 21; i++)
-                {
-                    Student student = _isuService.AddStudent(group, "A A A " + i);
-                }
+                
             });
         }
 
@@ -41,24 +35,17 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-                var group1 = new Group("M2400");
-                var group2 = new Group("lolkekcheburek");
-                var group3 = new Group("♂AHH♂");
-                var group6 = new Group("M3600");
-                var group7 = new Group("M3220");
+
             });
         }
 
         [Test]
         public void TransferStudentToAnotherGroup_GroupChanged()
         {
-            Group group1 = _isuService.AddGroup("M3201");
-            Group group2 = _isuService.AddGroup("M3202");
-            Student student = _isuService.AddStudent(group1, "Me Me Me");
-            Student student1 = _isuService.AddStudent(group1, "Meme Hehe");
-            Student student2 = _isuService.AddStudent(group1, "Meme");
-            _isuService.ChangeStudentGroup(student, group2);
-            Assert.IsFalse(group1.Students.Contains(student));
+            Assert.Catch<IsuException>(() =>
+            {
+
+            });
         }
     }
 }
