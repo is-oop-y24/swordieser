@@ -40,7 +40,7 @@ namespace Isu.Services
                 throw new MaxStudentPerGroupException();
             var s = new Student(name);
             group.Students.Add(s);
-            s.Group = group;
+            s.Group = group.GroupName;
             return s;
         }
 
@@ -133,10 +133,10 @@ namespace Isu.Services
                 throw new MaxStudentPerGroupException();
             }
 
-            Group firstGroup = FindGroup(student.Group.GroupName);
+            Group firstGroup = FindGroup(student.Group);
             firstGroup.Students.Remove(student);
             newGroup.Students.Add(student);
-            student.Group = newGroup;
+            student.Group = newGroup.GroupName;
         }
     }
 }

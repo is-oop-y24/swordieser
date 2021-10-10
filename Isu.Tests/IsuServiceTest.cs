@@ -39,22 +39,14 @@ namespace Isu.Tests
         [Test]
         public void CreateGroupWithInvalidName_ThrowException()
         {
-            // Assert.Catch<IsuException>(() =>
-            // {
-            //     var group1 = new Group("M2400");
-            //     var group2 = new Group("lolkekcheburek");
-            //     var group3 = new Group("♂AHH♂");
-            //     var group4 = new Group("M3600");
-            //     var group5 = new Group("M3220");
-            // });
-            
-            Assert.Catch<IsuException>(() => new Group("M2400"));
-            Assert.Catch<IsuException>(() => new Group("lolkekcheburek"));
-            Assert.Catch<IsuException>(() => new Group("♂AHH♂"));
-            Assert.Catch<IsuException>(() => new Group("M3600"));
-            Assert.Catch<IsuException>(() => new Group("M3220"));
-            
-            // а райдер говорит, что лучше через переменные...
+            Assert.Catch<IsuException>(() =>
+            {
+                var group1 = new Group("M2400");
+                var group2 = new Group("lolkekcheburek");
+                var group3 = new Group("♂AHH♂");
+                var group6 = new Group("M3600");
+                var group7 = new Group("M3220");
+            });
         }
 
         [Test]
