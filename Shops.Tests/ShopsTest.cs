@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Shops;
 
@@ -34,7 +35,7 @@ namespace Shops.Tests
 
             foreach (ProductInShop product in products)
             {
-                Assert.Contains(product, shop.GetCatalog().Values);
+                Assert.Contains(product, shop.GetCatalog().ToList());
             }
         }
 

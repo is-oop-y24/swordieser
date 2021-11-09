@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Shops
 {
@@ -8,13 +9,15 @@ namespace Shops
     {
         private static int _id = 1;
 
+        private readonly List<ProductInShop> _catalog;
+
         public Shop()
         {
             Name = string.Empty;
             Address = string.Empty;
             Id = -1;
             Money = -1;
-            Catalog = new Dictionary<int, ProductInShop>();
+            _catalog = new List<ProductInShop>();
         }
 
         public Shop(string name, string address)
@@ -24,7 +27,7 @@ namespace Shops
             Id = _id;
             _id++;
             Money = 0;
-            Catalog = new Dictionary<int, ProductInShop>();
+            _catalog = new List<ProductInShop>();
         }
 
         public string Name
@@ -50,40 +53,35 @@ namespace Shops
             private set;
         }
 
-        private Dictionary<int, ProductInShop> Catalog
-        {
-            get;
-        }
-
         public void Sell(int price, int id, int amount)
         {
             Money += price;
-            Catalog[id].Amount -= amount;
+            _catalog[id].Amount -= amount;
         }
 
         public void Supply(List<ProductInShop> products)
         {
-            foreach (var product in products)
+            foreach (ProductInShop product in products)
             {
-                if (Catalog.ContainsKey(product.Id))
+                ProductInShop tempProduct = _catalog.FirstOrDefault(temp => product.Id == temp.Id);
+                if (tempProduct == null)
                 {
-                    Catalog[product.Id].Amount += product.Amount;
+                    _catalog.Add(product);
+                    continue;
                 }
-                else
-                {
-                    Catalog.Add(product.Id, product);
-                }
+
+                tempProduct.Amount += product.Amount;
             }
         }
 
         public void ChangePrice(int id, int newPrice)
         {
-            Catalog[id].Price = newPrice;
+            _catalog[id].Price = newPrice;
         }
 
-        public ReadOnlyDictionary<int, ProductInShop> GetCatalog()
+        public IReadOnlyList<ProductInShop> GetCatalog()
         {
-            return new ReadOnlyDictionary<int, ProductInShop>(Catalog);
+            return _catalog.AsReadOnly();
         }
     }
 }

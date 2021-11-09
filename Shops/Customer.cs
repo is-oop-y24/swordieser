@@ -11,7 +11,6 @@
         public string Name
         {
             get;
-            private set;
         }
 
         public int Money
