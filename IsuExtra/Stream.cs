@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using IsuExtra.Tools;
 
 namespace IsuExtra
 {
@@ -8,12 +9,19 @@ namespace IsuExtra
 
         private List<Class> _timetable;
 
-        public Stream(string name, MegaFaculty megaFaculty)
+        public Stream(string name, MegaFaculty megaFaculty, int maxQuality)
         {
             Name = name;
             MegaFaculty = megaFaculty;
+            MaxQuality = maxQuality;
             _students = new List<ExtendedStudent>();
             _timetable = new List<Class>();
+        }
+
+        public int MaxQuality
+        {
+            get;
+            private set;
         }
 
         public string Name
@@ -29,9 +37,23 @@ namespace IsuExtra
 
         public IReadOnlyList<ExtendedStudent> StreamStudents => _students.AsReadOnly();
 
-        public void AddStudent(params ExtendedStudent[] student)
+        public IReadOnlyList<Class> StreamTimetable => _timetable.AsReadOnly();
+
+        public void AddStudent(params ExtendedStudent[] students)
         {
-            _students.AddRange(student);
+            foreach (var student in students)
+            {
+                if (_students.Count < MaxQuality)
+                    _students.Add(student);
+                else
+                    throw new NoPlaceForStudentException();
+            }
+        }
+
+        public ExtendedStudent RemoveStudent(ExtendedStudent student)
+        {
+            _students.Remove(student);
+            return student;
         }
     }
 }
