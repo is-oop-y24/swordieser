@@ -78,7 +78,7 @@ namespace Shops
                 where shop.GetCatalog().First(temp => temp.Id == product.Id).Price * amount < minPrice
                 select shop)
             {
-                minPrice = shop.GetCatalog()[product.Id].Price * amount;
+                minPrice = shop.GetCatalog().First(p => p.Id == product.Id).Price * amount;
                 cheapestShop = shop;
             }
 
