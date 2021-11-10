@@ -76,7 +76,7 @@ namespace Shops
 
         public void ChangePrice(int id, int newPrice)
         {
-            _catalog[id].Price = newPrice;
+            _catalog.FirstOrDefault(p => p.Id == id).Price = newPrice;
         }
 
         public IReadOnlyList<ProductInShop> GetCatalog()

@@ -57,7 +57,7 @@ namespace Shops.Tests
             shop.Supply(products);
             shop.ChangePrice(product2.Id, 25);
 
-            Assert.AreEqual(25, shop.GetCatalog()[product2.Id].Price);
+            Assert.AreEqual(25, shop.GetCatalog().First(temp => temp.Id == product2.Id).Price);
         }
 
         [Test]
@@ -85,7 +85,8 @@ namespace Shops.Tests
             shop1.Supply(products1);
             shop2.Supply(products2);
 
-            Assert.AreEqual(shop2, _manager.FindCheapestShop(_manager.Products[product1.Id], 2));
+            Assert.AreEqual(shop2, _manager.FindCheapestShop(_manager.Products.FirstOrDefault(
+                p => p.Id == product1.Id), 2));
         }
 
         [Test]
