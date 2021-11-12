@@ -46,17 +46,18 @@ namespace Shops
 
         public void Purchase(Customer customer, Shop shop, int id, int amount)
         {
-            if (shop.GetCatalog().All(temp => temp.Id != id))
+            ProductInShop productInShop = shop.GetCatalog().FirstOrDefault(temp => temp.Id == id);
+            if (productInShop is null)
             {
                 throw new ShopHasNotProductException();
             }
 
-            if (amount > shop.GetCatalog().First(temp => temp.Id == id).Amount)
+            if (amount > productInShop.Amount)
             {
                 throw new ShopHasntEnoughProductException();
             }
 
-            if (customer.Money < amount * shop.GetCatalog().First(temp => temp.Id == id).Price)
+            if (customer.Money < amount * productInShop.Price)
             {
                 throw new NotEnoughMoneyException();
             }
@@ -71,12 +72,12 @@ namespace Shops
             int minPrice = int.MaxValue;
 
             var cheapestShop = new Shop();
-            foreach (Shop shop in
-                from shop in _shops
-                where shop.GetCatalog().Any(temp => temp.Id == product.Id)
-                where shop.GetCatalog().First(temp => temp.Id == product.Id).Amount >= amount
-                where shop.GetCatalog().First(temp => temp.Id == product.Id).Price * amount < minPrice
-                select shop)
+            IEnumerable<Shop> tempShops = _shops.Where(shop =>
+                shop.GetCatalog().Any(temp => temp.Id == product.Id
+                 && shop.GetCatalog().First(temp => temp.Id == product.Id).Amount >= amount
+                 && shop.GetCatalog().First(temp => temp.Id == product.Id).Price * amount < minPrice));
+
+            foreach (Shop shop in tempShops)
             {
                 minPrice = shop.GetCatalog().First(p => p.Id == product.Id).Price * amount;
                 cheapestShop = shop;
