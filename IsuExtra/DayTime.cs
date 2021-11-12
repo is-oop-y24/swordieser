@@ -18,6 +18,8 @@
         Fourth,
         Fifth,
         Sixth,
+        Seventh,
+        Eighth,
     }
 
     public class DayTime

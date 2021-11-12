@@ -4,6 +4,7 @@
     {
         KTU,
         TINT,
+        FTMI,
     }
 
     public class MegaFaculty

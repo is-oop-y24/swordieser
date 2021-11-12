@@ -2,36 +2,32 @@
 {
     public class Class
     {
-        public Class(ExtendedGroup group, DayTime time, string teacher, int classroom)
+        public Class(DayTime time, string teacher, int classroom, string name)
         {
-            Group = group;
             Time = time;
             Teacher = teacher;
             Classroom = classroom;
-        }
-
-        public ExtendedGroup Group
-        {
-            get;
-            private set;
+            Name = name;
         }
 
         public DayTime Time
         {
             get;
-            private set;
         }
 
         public string Teacher
         {
             get;
-            private set;
         }
 
         public int Classroom
         {
             get;
-            private set;
+        }
+
+        public string Name
+        {
+            get;
         }
     }
 }

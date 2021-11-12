@@ -5,13 +5,14 @@ namespace IsuExtra
     public class ExtendedGroup : Isu.Services.Group
     {
         private List<Class> _timetable;
+        private List<ExtendedStudent> _extendedStudents;
 
         public ExtendedGroup(string name, MegaFaculty megaFaculty)
             : base(name)
         {
             MegaFaculty = megaFaculty;
             _timetable = new List<Class>();
-            ExtendedStudents = new List<ExtendedStudent>();
+            _extendedStudents = new List<ExtendedStudent>();
         }
 
         public ExtendedGroup(string name, List<Class> timetable, MegaFaculty megaFaculty)
@@ -19,25 +20,28 @@ namespace IsuExtra
         {
             _timetable = timetable;
             MegaFaculty = megaFaculty;
+            _extendedStudents = new List<ExtendedStudent>();
         }
 
         public IReadOnlyList<Class> TimetableOfGroup => _timetable.AsReadOnly();
 
         public MegaFaculty MegaFaculty { get; }
 
-        private List<ExtendedStudent> ExtendedStudents
-        {
-            get;
-        }
-
         public IReadOnlyList<ExtendedStudent> GetExtendedStudents()
         {
-            return ExtendedStudents.AsReadOnly();
+            return _extendedStudents.AsReadOnly();
         }
 
         public void AddClass(params Class[] @class)
         {
             _timetable.AddRange(@class);
+        }
+
+        public ExtendedStudent AddStudent(string name)
+        {
+            var student = new ExtendedStudent(name, this);
+            _extendedStudents.Add(student);
+            return student;
         }
     }
 }

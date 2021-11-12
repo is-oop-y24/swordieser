@@ -6,22 +6,32 @@ namespace IsuExtra
 {
     public class ExtendedIsuService : Isu.Services.IsuService
     {
-        private readonly List<Stream> _courses = new List<Stream>();
+        private List<Jgtd> _courses = new List<Jgtd>();
+        private List<ExtendedGroup> _groups = new List<ExtendedGroup>();
 
-        public Stream AddJgtd(string name, MegaFaculty megaFaculty, int maxQuality)
+        public Jgtd AddJgtd(string name, List<Stream> streams)
         {
-            var stream = new Stream(name, megaFaculty, maxQuality);
-            _courses.Add(stream);
-            return stream;
+            var jgtd = new Jgtd(streams);
+            _courses.Add(jgtd);
+            return jgtd;
         }
 
-        public void AddStudent(Stream stream, params ExtendedStudent[] students)
+        public ExtendedGroup AddGroup(string name, List<Class> timetable, MegaFaculty mf)
         {
-            if ((from student in students
-                from studentClass in student.StudentTimetable
-                from streamClass in stream.StreamTimetable
-                where studentClass.Time == streamClass.Time
-                select studentClass).Any())
+            var group = new ExtendedGroup(name, timetable, mf);
+            _groups.Add(group);
+            return group;
+        }
+
+        public ExtendedStudent AddStudent(string name, ExtendedGroup group)
+        {
+            return group.AddStudent(name);
+        }
+
+        public void AddStudentOnStream(Stream stream, params ExtendedStudent[] students)
+        {
+            if (students.Any(student => student.StudentTimetable.Any(studentClass =>
+                stream.StreamTimetable.Any(streamClass => studentClass.Time == streamClass.Time))))
             {
                 throw new IntersectionOfClassesException();
             }
@@ -33,15 +43,15 @@ namespace IsuExtra
             }
         }
 
-        public ExtendedStudent RemoveStudent(Stream stream, ExtendedStudent student)
+        public ExtendedStudent RemoveStudentFromStream(Stream stream, ExtendedStudent student)
         {
             student.RemoveStream(stream);
             return stream.RemoveStudent(student);
         }
 
-        public IReadOnlyList<ExtendedStudent> GetStudentsByJgtdGroup(ExtendedGroup group)
+        public IReadOnlyList<Stream> GetStreamsByCourse(Jgtd jgtd)
         {
-            return group.GetExtendedStudents();
+            return jgtd.GetCourses();
         }
 
         public List<ExtendedStudent> GetStudentWithoutCoursesByGroup(ExtendedGroup group)

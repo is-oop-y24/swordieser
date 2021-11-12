@@ -9,22 +9,15 @@ namespace IsuExtra
 
         private List<Class> _timetable;
 
-        public Stream(string name, MegaFaculty megaFaculty, int maxQuality)
+        public Stream(MegaFaculty megaFaculty, int maxQuality, List<Class> timetable)
         {
-            Name = name;
             MegaFaculty = megaFaculty;
             MaxQuality = maxQuality;
             _students = new List<ExtendedStudent>();
-            _timetable = new List<Class>();
+            _timetable = timetable;
         }
 
         public int MaxQuality
-        {
-            get;
-            private set;
-        }
-
-        public string Name
         {
             get;
             private set;
