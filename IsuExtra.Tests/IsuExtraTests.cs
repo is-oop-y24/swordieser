@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using System;
 
 namespace IsuExtra.Tests
 {
@@ -8,34 +9,34 @@ namespace IsuExtra.Tests
         private ExtendedIsuService _isuService;
         private List<Class> _groupTimetable;
         private List<Class> _foipTimetable; // fundamentals of intellectual property
-        MegaFaculty ftmi;
-        MegaFaculty tint;
+        MegaFaculty _ftmi;
+        MegaFaculty _tint;
 
         [SetUp]
         public void Setup()
         {
-            ftmi = new MegaFaculty(MegaFacultyName.FTMI);
-            tint = new MegaFaculty(MegaFacultyName.TINT);
+            _ftmi = new MegaFaculty(MegaFacultyName.FTMI);
+            _tint = new MegaFaculty(MegaFacultyName.TINT);
             _isuService = new ExtendedIsuService();
             _groupTimetable = new List<Class>()
             {
-                new Class(new ClassTime(System.DayOfWeek.Monday, NumberOfClass.Second),
+                new Class(new ClassTime(DayOfWeek.Monday, NumberOfClass.Second),
                     "Nosovitskii", 403, "oop"),
-                new Class(new ClassTime(System.DayOfWeek.Tuesday, NumberOfClass.Third),
+                new Class(new ClassTime(DayOfWeek.Tuesday, NumberOfClass.Third),
                     "Suslina", 0, "probability theory"),
-                new Class(new ClassTime(System.DayOfWeek.Thursday, NumberOfClass.First),
+                new Class(new ClassTime(DayOfWeek.Thursday, NumberOfClass.First),
                     "Egorov", 539, "physics"),
-                new Class(new ClassTime(System.DayOfWeek.Friday, NumberOfClass.Fourth),
+                new Class(new ClassTime(DayOfWeek.Friday, NumberOfClass.Fourth),
                     "Batotsyrenov", 230, "operating systems"),
-                new Class(new ClassTime(System.DayOfWeek.Saturday, NumberOfClass.Third),
+                new Class(new ClassTime(DayOfWeek.Saturday, NumberOfClass.Third),
                     "Vozianova", 429, "additional chapters of higher mathematics")
             };
 
             _foipTimetable = new List<Class>()
             {
-                new Class(new ClassTime(System.DayOfWeek.Wednesday, NumberOfClass.Third),
+                new Class(new ClassTime(DayOfWeek.Wednesday, NumberOfClass.Third),
                     "Nikolaev", 206, "foip"),
-                new Class(new ClassTime(System.DayOfWeek.Saturday, NumberOfClass.Fourth),
+                new Class(new ClassTime(DayOfWeek.Saturday, NumberOfClass.Fourth),
                     "Nikolaev", 403, "foip")
             };
         }
@@ -45,15 +46,15 @@ namespace IsuExtra.Tests
         {
             var streams = new List<Stream>()
             {
-                new Stream(ftmi, 20, _foipTimetable),
+                new Stream(_ftmi, 20, _foipTimetable),
             };
 
-            var foip = _isuService.AddJgtd("foip", streams);
-            var m3204 = _isuService.AddGroup("M3204", _groupTimetable, tint);
-            var someone = _isuService.AddStudent("someone", m3204);
+            Jgtd foip = _isuService.AddJgtd("foip", streams);
+            ExtendedGroup m3204 = _isuService.AddGroup("M3204", _groupTimetable, _tint);
+            ExtendedStudent someone = _isuService.AddStudent("someone", m3204);
 
             _isuService.AddStudentOnStream(streams[0], new List<ExtendedStudent>() {someone});
-            var temp = streams[0].StreamStudents;
+            IReadOnlyList<ExtendedStudent> temp = streams[0].StreamStudents;
             Assert.AreEqual(someone, temp[0]);
 
             _isuService.RemoveStudentFromStream(streams[0], someone);
@@ -65,16 +66,16 @@ namespace IsuExtra.Tests
         {
             var foipSecondTimetable = new List<Class>()
             {
-                new Class(new ClassTime(System.DayOfWeek.Tuesday, NumberOfClass.Fifth),
+                new Class(new ClassTime(DayOfWeek.Tuesday, NumberOfClass.Fifth),
                     "Nikolaev", 206, "foip"),
-                new Class(new ClassTime(System.DayOfWeek.Saturday, NumberOfClass.Eighth),
+                new Class(new ClassTime(DayOfWeek.Saturday, NumberOfClass.Eighth),
                     "Nikolaev", 403, "foip")
             };
 
             var foipStreams = new List<Stream>()
             {
-                new Stream(ftmi, 30, _foipTimetable),
-                new Stream(ftmi, 20, foipSecondTimetable)
+                new Stream(_ftmi, 30, _foipTimetable),
+                new Stream(_ftmi, 20, foipSecondTimetable)
             };
 
             var foip = new Jgtd(foipStreams);
@@ -85,19 +86,19 @@ namespace IsuExtra.Tests
         [Test]
         public void GetStudentsByStream()
         {
-            var stream = new Stream(ftmi, 20, _foipTimetable);
+            var stream = new Stream(_ftmi, 20, _foipTimetable);
             var streams = new List<Stream>()
             {
                 stream
             };
-            var foip = _isuService.AddJgtd("foip", streams);
+            Jgtd foip = _isuService.AddJgtd("foip", streams);
 
 
-            var m3204 = _isuService.AddGroup("M3204", _groupTimetable, tint);
-            var m3203 = _isuService.AddGroup("M3203", _groupTimetable, tint);
+            ExtendedGroup m3204 = _isuService.AddGroup("M3204", _groupTimetable, _tint);
+            ExtendedGroup m3203 = _isuService.AddGroup("M3203", _groupTimetable, _tint);
 
-            var student1 = _isuService.AddStudent("student1", m3204);
-            var student2 = _isuService.AddStudent("student2", m3203);
+            ExtendedStudent student1 = _isuService.AddStudent("student1", m3204);
+            ExtendedStudent student2 = _isuService.AddStudent("student2", m3203);
 
 
             _isuService.AddStudentOnStream(stream, new List<ExtendedStudent>() {student1, student2});
@@ -113,21 +114,21 @@ namespace IsuExtra.Tests
         [Test]
         public void GetStudentsWithoutCourse()
         {
-            var stream = new Stream(ftmi, 20, _foipTimetable);
+            var stream = new Stream(_ftmi, 20, _foipTimetable);
             var streams = new List<Stream>()
             {
                 stream
             };
-            var foip = _isuService.AddJgtd("foip", streams);
+            Jgtd foip = _isuService.AddJgtd("foip", streams);
 
 
-            var m3204 = _isuService.AddGroup("M3204", _groupTimetable, tint);
+            ExtendedGroup m3204 = _isuService.AddGroup("M3204", _groupTimetable, _tint);
 
-            var student1 = _isuService.AddStudent("student1", m3204);
-            var student2 = _isuService.AddStudent("student2", m3204);
+            ExtendedStudent student1 = _isuService.AddStudent("student1", m3204);
+            ExtendedStudent student2 = _isuService.AddStudent("student2", m3204);
 
             _isuService.AddStudentOnStream(stream, new List<ExtendedStudent>() {student1});
-            var temp = _isuService.GetStudentWithoutCoursesByGroup(m3204)[0];
+            ExtendedStudent temp = _isuService.GetStudentWithoutCoursesByGroup(m3204)[0];
             Assert.AreEqual(student2, temp);
         }
     }
