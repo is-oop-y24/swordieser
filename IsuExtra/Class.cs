@@ -2,7 +2,7 @@
 {
     public class Class
     {
-        public Class(DayTime time, string teacher, int classroom, string name)
+        public Class(ClassTime time, string teacher, int classroom, string name)
         {
             Time = time;
             Teacher = teacher;
@@ -10,7 +10,7 @@
             Name = name;
         }
 
-        public DayTime Time
+        public ClassTime Time
         {
             get;
         }

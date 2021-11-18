@@ -19,23 +19,23 @@ namespace IsuExtra.Tests
             _isuService = new ExtendedIsuService();
             _groupTimetable = new List<Class>()
             {
-                new Class(new DayTime(Day.Monday, NumberOfClass.Second),
+                new Class(new ClassTime(System.DayOfWeek.Monday, NumberOfClass.Second),
                     "Nosovitskii", 403, "oop"),
-                new Class(new DayTime(Day.Tuesday, NumberOfClass.Third),
+                new Class(new ClassTime(System.DayOfWeek.Tuesday, NumberOfClass.Third),
                     "Suslina", 0, "probability theory"),
-                new Class(new DayTime(Day.Thursday, NumberOfClass.First),
+                new Class(new ClassTime(System.DayOfWeek.Thursday, NumberOfClass.First),
                     "Egorov", 539, "physics"),
-                new Class(new DayTime(Day.Friday, NumberOfClass.Fourth),
+                new Class(new ClassTime(System.DayOfWeek.Friday, NumberOfClass.Fourth),
                     "Batotsyrenov", 230, "operating systems"),
-                new Class(new DayTime(Day.Saturday, NumberOfClass.Third),
+                new Class(new ClassTime(System.DayOfWeek.Saturday, NumberOfClass.Third),
                     "Vozianova", 429, "additional chapters of higher mathematics")
             };
 
             _foipTimetable = new List<Class>()
             {
-                new Class(new DayTime(Day.Wednesday, NumberOfClass.Third),
+                new Class(new ClassTime(System.DayOfWeek.Wednesday, NumberOfClass.Third),
                     "Nikolaev", 206, "foip"),
-                new Class(new DayTime(Day.Saturday, NumberOfClass.Fourth),
+                new Class(new ClassTime(System.DayOfWeek.Saturday, NumberOfClass.Fourth),
                     "Nikolaev", 403, "foip")
             };
         }
@@ -65,9 +65,9 @@ namespace IsuExtra.Tests
         {
             var foipSecondTimetable = new List<Class>()
             {
-                new Class(new DayTime(Day.Tuesday, NumberOfClass.Fifth),
+                new Class(new ClassTime(System.DayOfWeek.Tuesday, NumberOfClass.Fifth),
                     "Nikolaev", 206, "foip"),
-                new Class(new DayTime(Day.Saturday, NumberOfClass.Eighth),
+                new Class(new ClassTime(System.DayOfWeek.Saturday, NumberOfClass.Eighth),
                     "Nikolaev", 403, "foip")
             };
 
