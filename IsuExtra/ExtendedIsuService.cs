@@ -28,7 +28,7 @@ namespace IsuExtra
             return group.AddStudent(name);
         }
 
-        public void AddStudentOnStream(Stream stream, params ExtendedStudent[] students)
+        public void AddStudentOnStream(Stream stream, List<ExtendedStudent> students)
         {
             if (students.Any(student => student.StudentTimetable.Any(studentClass =>
                 stream.StreamTimetable.Any(streamClass => studentClass.Time == streamClass.Time))))

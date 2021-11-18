@@ -32,9 +32,9 @@ namespace IsuExtra
 
         public IReadOnlyList<Class> StreamTimetable => _timetable.AsReadOnly();
 
-        public void AddStudent(params ExtendedStudent[] students)
+        public void AddStudent(List<ExtendedStudent> students)
         {
-            foreach (var student in students)
+            foreach (ExtendedStudent student in students)
             {
                 if (_students.Count < MaxQuality)
                     _students.Add(student);

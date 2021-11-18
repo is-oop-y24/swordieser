@@ -52,7 +52,7 @@ namespace IsuExtra.Tests
             var m3204 = _isuService.AddGroup("M3204", _groupTimetable, tint);
             var someone = _isuService.AddStudent("someone", m3204);
 
-            _isuService.AddStudentOnStream(streams[0], someone);
+            _isuService.AddStudentOnStream(streams[0], new List<ExtendedStudent>() {someone});
             var temp = streams[0].StreamStudents;
             Assert.AreEqual(someone, temp[0]);
 
@@ -100,7 +100,7 @@ namespace IsuExtra.Tests
             var student2 = _isuService.AddStudent("student2", m3203);
 
 
-            _isuService.AddStudentOnStream(stream, student1, student2);
+            _isuService.AddStudentOnStream(stream, new List<ExtendedStudent>() {student1, student2});
             var expected = new List<ExtendedStudent>()
             {
                 student1,
@@ -126,7 +126,7 @@ namespace IsuExtra.Tests
             var student1 = _isuService.AddStudent("student1", m3204);
             var student2 = _isuService.AddStudent("student2", m3204);
 
-            _isuService.AddStudentOnStream(stream, student1);
+            _isuService.AddStudentOnStream(stream, new List<ExtendedStudent>() {student1});
             var temp = _isuService.GetStudentWithoutCoursesByGroup(m3204)[0];
             Assert.AreEqual(student2, temp);
         }
