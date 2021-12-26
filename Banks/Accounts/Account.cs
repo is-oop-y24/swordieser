@@ -1,4 +1,7 @@
-﻿namespace Banks.Accounts
+﻿using System;
+using Banks.Exceptions;
+
+namespace Banks.Accounts
 {
     public class Account
     {
@@ -20,6 +23,10 @@
         public double MonthlyPercentage { get; set; }
 
         public double MonthlyCommission { get; set; }
+
+        public double MaxWithdraw { get; set; } = 0;
+
+        public double MaxTransfer { get; set; } = 0;
 
         public void Replenishment(double amount)
         {

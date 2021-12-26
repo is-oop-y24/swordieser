@@ -33,6 +33,18 @@
             return this;
         }
 
+        public AccountBuilder SetMaxWithdraw(double amount)
+        {
+            _account.MaxWithdraw = amount;
+            return this;
+        }
+
+        public AccountBuilder SetMaxTransfer(double amount)
+        {
+            _account.MaxTransfer = amount;
+            return this;
+        }
+
         public Account Build()
         {
             return _account;

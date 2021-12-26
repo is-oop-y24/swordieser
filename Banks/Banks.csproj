@@ -29,9 +29,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Clients" />
-    <Folder Include="Transactions" />
-  </ItemGroup>
-
 </Project>
