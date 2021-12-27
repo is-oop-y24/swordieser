@@ -1,4 +1,6 @@
-﻿namespace Banks.Accounts
+﻿using System;
+
+namespace Banks.Accounts
 {
     public class AccountBuilder
     {
@@ -42,6 +44,12 @@
         public AccountBuilder SetMaxTransfer(double amount)
         {
             _account.MaxTransfer = amount;
+            return this;
+        }
+
+        public AccountBuilder SetAccountPeriod(DateTime dateTime)
+        {
+            _account.AccountPeriod = dateTime;
             return this;
         }
 

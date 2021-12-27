@@ -22,9 +22,16 @@ namespace Banks.Banks
             return instance ??= new CentralBank();
         }
 
-        public Bank CreateBank(string name, double percent, double commission, double creditLimit)
+        public Bank CreateBank(
+            string name,
+            double percent,
+            double commission,
+            double creditLimit,
+            double maxWithdraw,
+            double maxTransfer,
+            Dictionary<double, double> percentsBorders)
         {
-            var bank = new Bank(name, percent, commission, creditLimit);
+            var bank = new Bank(name, percent, commission, creditLimit, maxWithdraw, maxTransfer, percentsBorders);
             _banks.Add(bank);
             return bank;
         }

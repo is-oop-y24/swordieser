@@ -15,7 +15,7 @@ namespace Banks.Transactions
                     $"Your account is doubtful so you can't withdraw more than {sender.MaxWithdraw}");
             }
 
-            if (Math.Abs(sender.Balance) + sender.CreditLimit < amount)
+            if (sender.Balance + sender.CreditLimit < amount)
             {
                 throw new WithdrawException(
                     $"You haven't enough money: your balance is {sender.Balance} and your credit limit is {sender.CreditLimit}");
