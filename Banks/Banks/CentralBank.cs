@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Banks.Banks
@@ -39,6 +40,14 @@ namespace Banks.Banks
         public ReadOnlyCollection<Bank> GetBanks()
         {
             return _banks.AsReadOnly();
+        }
+
+        public void NotifyBanks(DateTime dateTime)
+        {
+            foreach (Bank bank in _banks)
+            {
+                bank.UpdateBalance(dateTime);
+            }
         }
     }
 }
