@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Banks.Accounts;
 using Banks.Clients;
@@ -216,6 +217,7 @@ namespace Banks.Banks
 
             var trans = new TransferTransaction(sender, recipient, amount, sender.TransactionId++);
             sender.AddTransaction(trans);
+            recipient.AddTransaction(trans);
         }
 
         public void Cancellation(Account account, Transaction transaction)
@@ -230,6 +232,11 @@ namespace Banks.Banks
             {
                 account.BalanceUpdate(dateTime);
             }
+        }
+
+        public ReadOnlyCollection<Account> GetAccounts()
+        {
+            return _accounts.AsReadOnly();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using Banks.Observers;
 using Banks.Transactions;
@@ -99,6 +100,11 @@ namespace Banks.Accounts
                     }
                 }
             }
+        }
+
+        public ReadOnlyCollection<Transaction> GetTransactionsHistory()
+        {
+            return _transactionsHistory.AsReadOnly();
         }
     }
 }

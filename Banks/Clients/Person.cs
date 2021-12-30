@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Banks.Accounts;
 
@@ -19,7 +20,7 @@ namespace Banks.Clients
 
         public string Surname { get; }
 
-        public string Address { get; set; } = null;
+        public string Address { get; set; } = string.Empty;
 
         public long Passport { get; set; } = 0;
 
@@ -37,7 +38,7 @@ namespace Banks.Clients
 
         public void CheckDoubtfulness()
         {
-            if (Address != null && Passport != 0)
+            if (Address != string.Empty && Passport != 0)
             {
                 Doubtful = false;
                 foreach (Account account in _accounts)
