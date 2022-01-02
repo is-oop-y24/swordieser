@@ -9,6 +9,11 @@ namespace Banks.Transactions
         public TransferTransaction(Account sender, Account recipient, double amount, int id)
             : base(sender, recipient, amount, id)
         {
+            if (amount <= 0)
+            {
+                throw new InvalidTransactionAmountException();
+            }
+
             if (sender.MaxWithdraw != 0 && amount > sender.MaxWithdraw)
             {
                 throw new ReplenishmentException(

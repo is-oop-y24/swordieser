@@ -6,9 +6,15 @@ namespace Banks.Accounts
     {
         private Account _account;
 
-        public AccountBuilder(long id)
+        public AccountBuilder()
         {
-            _account = new Account(id);
+            _account = new Account();
+        }
+
+        public AccountBuilder SetId(long id)
+        {
+            _account.Id = id;
+            return this;
         }
 
         public AccountBuilder SetStartBalance(double amount)

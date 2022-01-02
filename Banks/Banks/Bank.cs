@@ -88,7 +88,8 @@ namespace Banks.Banks
 
         public Account CreateDebitAccount(Person person, double startBalance)
         {
-            Account account = Account.CreateBuilder(_accountsCounter++)
+            Account account = Account.CreateBuilder()
+                .SetId(_accountsCounter++)
                 .SetPercent(_percent)
                 .SetMaxTransfer(_maxTransfer)
                 .SetMaxWithdraw(_maxWithdraw)
@@ -103,7 +104,8 @@ namespace Banks.Banks
 
         public Account CreateDepositAccount(Person person, double startBalance, DateTime end)
         {
-            Account account = Account.CreateBuilder(_accountsCounter++)
+            Account account = Account.CreateBuilder()
+                .SetId(_accountsCounter++)
                 .SetPercent(ChooseDepositPercent(startBalance))
                 .SetMaxTransfer(_maxTransfer)
                 .SetMaxWithdraw(_maxWithdraw)
@@ -129,7 +131,8 @@ namespace Banks.Banks
 
         public Account CreateCreditAccount(Person person, double startBalance)
         {
-            Account account = Account.CreateBuilder(_accountsCounter++)
+            Account account = Account.CreateBuilder()
+                .SetId(_accountsCounter++)
                 .SetMaxTransfer(_maxTransfer)
                 .SetMaxWithdraw(_maxWithdraw)
                 .SetStartBalance(startBalance)

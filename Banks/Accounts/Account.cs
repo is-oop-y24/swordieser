@@ -11,14 +11,13 @@ namespace Banks.Accounts
     {
         private List<Transaction> _transactionsHistory;
 
-        public Account(long id)
+        public Account()
         {
-            Id = id;
             _transactionsHistory = new List<Transaction>();
             MessagesList = new List<string>();
         }
 
-        public long Id { get; }
+        public long Id { get; set; }
 
         public double Balance { get; private set; }
 
@@ -42,9 +41,9 @@ namespace Banks.Accounts
 
         public DateTime AccountPeriod { get; set; } = DateTime.MinValue;
 
-        public static AccountBuilder CreateBuilder(long id)
+        public static AccountBuilder CreateBuilder()
         {
-            return new AccountBuilder(id);
+            return new AccountBuilder();
         }
 
         public void Replenishment(double amount)
