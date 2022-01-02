@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using Backups.Tools;
 
 namespace Backups
 {
@@ -7,33 +8,40 @@ namespace Backups
     {
         private static int _id = 1;
 
-        public RestorePoint(string name, StorageType storageType, string backupPath)
+        private List<Repository> _repositories;
+
+        public RestorePoint(string backupPath)
         {
-            Repositories = new List<Repository>();
             Id = _id++;
-            Name = name;
-            if (storageType == StorageType.Local)
-            {
-                var directory = new DirectoryInfo(Path.Combine(backupPath, name + Id));
-                if (!directory.Exists)
-                {
-                    directory.Create();
-                }
-            }
+            _repositories = new List<Repository>();
+            CreationTime = DateTime.Now;
+            Path = backupPath;
         }
+
+        public DateTime CreationTime { get; }
 
         public int Id { get; }
 
-        public string Name { get; }
-        private List<Repository> Repositories { get; }
+        public string Path { get; }
 
-        public IReadOnlyList<Repository> GetRepositories() { return Repositories.AsReadOnly(); }
-
-        public Repository AddRepository(string name)
+        public void AddRepositories(List<Repository> repositories)
         {
-            var repo = new Repository(name);
-            Repositories.Add(repo);
-            return repo;
+            _repositories.AddRange(repositories);
+        }
+
+        public void RemoveRepository(Repository repo)
+        {
+            if (repo == null)
+            {
+                throw new BackupException("null repo");
+            }
+
+            _repositories.Remove(repo);
+        }
+
+        public IReadOnlyList<Repository> GetRepositories()
+        {
+            return _repositories.AsReadOnly();
         }
     }
 }

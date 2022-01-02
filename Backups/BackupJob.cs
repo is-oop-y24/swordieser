@@ -1,42 +1,57 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Backups.Interfaces;
-using NUnit.Framework;
+using Backups.Tools;
 
 namespace Backups
 {
     public class BackupJob
     {
-        public BackupJob(string name)
+        private List<RestorePoint> _restorePoints;
+
+        private IArchiveSaver _archiveSaver;
+
+        private IBackupSaver _backupSaver;
+
+        private List<FileInfo> _files;
+
+        public BackupJob(string name, IArchiveSaver archiveSaver, IBackupSaver backupSaver)
         {
             Name = name;
-            RestorePoints = new List<RestorePoint>();
+            _restorePoints = new List<RestorePoint>();
+            _archiveSaver = archiveSaver;
+            _backupSaver = backupSaver;
+            _files = new List<FileInfo>();
         }
 
         public string Name { get; }
 
-        private List<RestorePoint> RestorePoints { get; }
-
         public IReadOnlyList<RestorePoint> GetRestorePoints()
         {
-            return RestorePoints.AsReadOnly();
+            return _restorePoints.AsReadOnly();
         }
 
-        public RestorePoint AddRestorePoint(string name, StorageType storageType, string backupPath = "")
+        public void AddJobObjects(List<FileInfo> files)
         {
-            var rp = new RestorePoint(name, storageType, backupPath);
-            RestorePoints.Add(rp);
+            _files.AddRange(files);
+        }
+
+        public void DeleteJobObject(FileInfo file)
+        {
+            if (file == null)
+            {
+                throw new BackupException("null file");
+            }
+
+            _files.Remove(file);
+        }
+
+        public RestorePoint CreateRestorePoint(string path)
+        {
+            var rp = new RestorePoint(path);
+            _restorePoints.Add(rp);
+            _archiveSaver.Save(_files, rp, _backupSaver);
             return rp;
-        }
-
-        public void CreateLocalBackup(RestorePoint restorePoint, ILocalStorage localStorage, string backupPath, int id)
-        {
-            localStorage.Save(restorePoint.Name, backupPath, id);
-        }
-
-        public void CreateVirtualBackup(IVirtualStorage virtualStorage, List<FileInfo> files, RestorePoint restorePoint, int id)
-        {
-            virtualStorage.Save(files, restorePoint, id);
         }
     }
 }

@@ -5,20 +5,21 @@ namespace Backups
 {
     public class Repository
     {
-        public Repository(string name)
+        private List<FileInfo> _files;
+
+        public Repository()
         {
-            Files = new List<FileInfo>();
-            Name = name;
+            _files = new List<FileInfo>();
         }
 
-        public string Name { get;  }
-        private List<FileInfo> Files { get; }
-
-        public IReadOnlyList<FileInfo> GetFiles() { return Files.AsReadOnly(); }
-
-        public void AddFiles(params FileInfo[] files)
+        public IReadOnlyList<FileInfo> GetFiles()
         {
-            Files.AddRange(files);
+            return _files.AsReadOnly();
+        }
+
+        public void AddFiles(List<FileInfo> files)
+        {
+            _files.AddRange(files);
         }
     }
 }
