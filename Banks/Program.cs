@@ -121,13 +121,14 @@ namespace Banks
                     {
                         case "1":
                         case "Register":
-                            ClientBuilder clientBuilder = new Client();
                             Console.WriteLine("Type your name and surname");
-                            Person person = clientBuilder.CreateNewClient(Console.ReadLine(), Console.ReadLine());
+                            string personName = Console.ReadLine();
+                            string personSurname = Console.ReadLine();
                             Console.WriteLine("Type your address to verify your account");
-                            clientBuilder.SetAddress(Console.ReadLine());
+                            string personAddress = Console.ReadLine();
                             Console.WriteLine("Type your passport to end verification");
-                            clientBuilder.SetPassport(Convert.ToInt32(Console.ReadLine()));
+                            long passport = Convert.ToInt32(Console.ReadLine());
+                            var person = new Person(personName, personSurname, personAddress, passport);
                             person.CheckDoubtfulness();
                             clients.Add(person);
                             break;
@@ -184,7 +185,7 @@ namespace Banks
                             foreach (Person client in clients.Where(client =>
                                 $"{client.Name} {client.Surname}" == tempName))
                             {
-                                foreach (Account account in client.GetAccounts())
+                                foreach (IAccount account in client.GetAccounts())
                                 {
                                     Console.WriteLine($"{account.Id}:" +
                                                       $"\nBalance: {account.Balance}");
@@ -200,7 +201,7 @@ namespace Banks
                             foreach (Person client in clients.Where(client =>
                                 $"{client.Name} {client.Surname}" == accName))
                             {
-                                foreach (Account account in client.GetAccounts().Where(account => account.Id == accId))
+                                foreach (IAccount account in client.GetAccounts().Where(account => account.Id == accId))
                                 {
                                     Console.WriteLine($"Balance: {account.Balance}");
                                 }
@@ -215,7 +216,7 @@ namespace Banks
                             foreach (Person client in clients.Where(client =>
                                 $"{client.Name} {client.Surname}" == withName))
                             {
-                                foreach (Account account in client.GetAccounts().Where(account => account.Id == withId))
+                                foreach (IAccount account in client.GetAccounts().Where(account => account.Id == withId))
                                 {
                                     foreach (Bank bank in centralBank.GetBanks()
                                         .Where(bank => bank.GetAccounts().Contains(account)))
@@ -237,7 +238,7 @@ namespace Banks
                             foreach (Person client in clients.Where(client =>
                                 $"{client.Name} {client.Surname}" == repName))
                             {
-                                foreach (Account account in client.GetAccounts().Where(account => account.Id == repId))
+                                foreach (IAccount account in client.GetAccounts().Where(account => account.Id == repId))
                                 {
                                     foreach (Bank bank in centralBank.GetBanks()
                                         .Where(bank => bank.GetAccounts().Contains(account)))
@@ -259,7 +260,7 @@ namespace Banks
                             foreach (Person client in clients.Where(client =>
                                 $"{client.Name} {client.Surname}" == transferName))
                             {
-                                foreach (Account account in client.GetAccounts()
+                                foreach (IAccount account in client.GetAccounts()
                                     .Where(account => account.Id == transferId))
                                 {
                                     Console.WriteLine("Type full name and account id of the recipient");
@@ -268,7 +269,7 @@ namespace Banks
                                     foreach (Person client1 in clients.Where(client1 =>
                                         $"{client1.Name} {client1.Surname}" == recipName))
                                     {
-                                        foreach (Account account1 in client1.GetAccounts()
+                                        foreach (IAccount account1 in client1.GetAccounts()
                                             .Where(account1 => account.Id == recipId))
                                         {
                                             foreach (Bank bank in centralBank.GetBanks()
@@ -293,7 +294,7 @@ namespace Banks
                             foreach (Person client in clients.Where(client =>
                                 $"{client.Name} {client.Surname}" == transName))
                             {
-                                foreach (Account account in client.GetAccounts()
+                                foreach (IAccount account in client.GetAccounts()
                                     .Where(account => account.Id == transId))
                                 {
                                     foreach (Transaction transaction in account.GetTransactionsHistory())
@@ -323,7 +324,7 @@ namespace Banks
                             foreach (Person client in clients.Where(client =>
                                 $"{client.Name} {client.Surname}" == cancelName))
                             {
-                                foreach (Account account in client.GetAccounts()
+                                foreach (IAccount account in client.GetAccounts()
                                     .Where(account => account.Id == cancelId))
                                 {
                                     Console.WriteLine("Type the id of the transaction");
