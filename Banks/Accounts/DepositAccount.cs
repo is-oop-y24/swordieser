@@ -2,49 +2,46 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using Banks.Observers;
 using Banks.Transactions;
 
 namespace Banks.Accounts
 {
-    public class Account : INotifyObserver
+    public class DepositAccount : IAccount
     {
-        private List<Transaction> _transactionsHistory;
+        private readonly List<Transaction> _transactionHistory;
 
-        public Account()
+        public DepositAccount(
+            long id,
+            double percent,
+            double maxTransfer,
+            double maxWithdraw,
+            double startBalance,
+            DateTime endOfAccount)
         {
-            _transactionsHistory = new List<Transaction>();
+            Id = id;
+            Percent = percent;
+            MaxTransfer = maxTransfer;
+            MaxWithdraw = maxWithdraw;
+            Balance = startBalance;
+            AccountPeriod = endOfAccount;
+            _transactionHistory = new List<Transaction>();
             MessagesList = new List<string>();
+            Commission = 0;
+            CreditLimit = 0;
         }
 
-        public long Id { get; set; }
-
+        public long Id { get; }
         public double Balance { get; private set; }
-
-        public double Percent { get; set; } = 0;
-
-        public double Commission { get; set; }
-
-        public double CreditLimit { get; set; } = 0;
-
-        public double MonthlyPercentage { get; set; }
-
-        public double MonthlyCommission { get; set; }
-
-        public double MaxWithdraw { get; set; } = 0;
-
-        public double MaxTransfer { get; set; } = 0;
-
+        public double Percent { get; private set; }
+        public double Commission { get; }
+        public double CreditLimit { get; }
+        public double MonthlyPercentage { get; private set; }
+        public double MonthlyCommission { get; private set; }
+        public double MaxWithdraw { get; private set; }
+        public double MaxTransfer { get; private set; }
         public List<string> MessagesList { get; }
-
-        public int TransactionId { get; set; } = 1;
-
-        public DateTime AccountPeriod { get; set; } = DateTime.MinValue;
-
-        public static AccountBuilder CreateBuilder()
-        {
-            return new AccountBuilder();
-        }
+        public int TransactionId { get; } = 1;
+        public DateTime AccountPeriod { get; }
 
         public void Replenishment(double amount)
         {
@@ -63,13 +60,13 @@ namespace Banks.Accounts
 
         public void AddTransaction(Transaction t)
         {
-            _transactionsHistory.Add(t);
+            _transactionHistory.Add(t);
         }
 
         public void BalanceUpdate(DateTime dateTime)
         {
-            var date = DateTime.Today;
-            var daysUntilEnd = dateTime.Subtract(date).TotalDays;
+            DateTime date = DateTime.Today;
+            double daysUntilEnd = dateTime.Subtract(date).TotalDays;
 
             if (Commission != 0 && Balance < 0)
             {
@@ -103,7 +100,30 @@ namespace Banks.Accounts
 
         public ReadOnlyCollection<Transaction> GetTransactionsHistory()
         {
-            return _transactionsHistory.AsReadOnly();
+            return _transactionHistory.AsReadOnly();
+        }
+
+        public void SetPercent(double amount)
+        {
+            Percent = amount;
+        }
+
+        public void SetCommission(double amount)
+        {
+        }
+
+        public void SetCreditLimit(double amount)
+        {
+        }
+
+        public void SetMaxWithdraw(double amount)
+        {
+            MaxWithdraw = amount;
+        }
+
+        public void SetMaxTransfer(double amount)
+        {
+            MaxTransfer = amount;
         }
     }
 }
