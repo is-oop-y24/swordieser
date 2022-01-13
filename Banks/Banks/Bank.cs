@@ -6,32 +6,31 @@ using Banks.Accounts;
 using Banks.Clients;
 using Banks.Exceptions;
 using Banks.Messages;
-using Banks.Observers;
 using Banks.Transactions;
 
 namespace Banks.Banks
 {
-    public class Bank : INotifyObservable
+    public class Bank
     {
         private static int _banksId = 1;
 
         private static int _accountsCounter = 1;
 
-        private List<INotifyObserver> _observers;
+        private readonly List<IAccount> _observers;
 
-        private List<Account> _accounts;
+        private readonly List<IAccount> _accounts;
 
-        private double _percent;
+        private readonly double _percent;
 
-        private double _commission;
+        private readonly double _commission;
 
-        private double _creditLimit;
+        private readonly double _creditLimit;
 
-        private double _maxTransfer;
+        private readonly double _maxTransfer;
 
-        private double _maxWithdraw;
+        private readonly double _maxWithdraw;
 
-        private Dictionary<double, double> _percentsBorders;
+        private readonly Dictionary<double, double> _percentsBorders;
 
         public Bank(
             string name,
@@ -50,15 +49,15 @@ namespace Banks.Banks
             _maxWithdraw = maxWithdraw;
             _maxTransfer = maxTransfer;
             _percentsBorders = percentsBorders;
-            _accounts = new List<Account>();
-            _observers = new List<INotifyObserver>();
+            _accounts = new List<IAccount>();
+            _observers = new List<IAccount>();
         }
 
         public int Id { get; }
 
         public string Name { get; }
 
-        public void RegisterObserver(INotifyObserver observer)
+        public void RegisterObserver(IAccount observer)
         {
             if (_observers.Any(obs => obs == observer))
             {
@@ -68,7 +67,7 @@ namespace Banks.Banks
             _observers.Add(observer);
         }
 
-        public void RemoveObserver(INotifyObserver observer)
+        public void RemoveObserver(IAccount observer)
         {
             if (_observers.All(obs => obs != observer))
             {
@@ -78,23 +77,22 @@ namespace Banks.Banks
             _observers.Remove(observer);
         }
 
-        public void SendNotify(List<INotifyObserver> observers, double amount, IBankMessage message)
+        public void SendNotify(List<IAccount> observers, double amount, IBankMessage message)
         {
-            foreach (INotifyObserver observer in observers)
+            foreach (IAccount observer in observers)
             {
                 observer.Update(message.Message(amount));
             }
         }
 
-        public Account CreateDebitAccount(Person person, double startBalance)
+        public IAccount CreateDebitAccount(Person person, double startBalance)
         {
-            Account account = Account.CreateBuilder()
-                .SetId(_accountsCounter++)
-                .SetPercent(_percent)
-                .SetMaxTransfer(_maxTransfer)
-                .SetMaxWithdraw(_maxWithdraw)
-                .SetStartBalance(startBalance)
-                .Build();
+            var account = new DebitAccount(
+                _accountsCounter++,
+                _percent,
+                _maxTransfer,
+                _maxWithdraw,
+                startBalance);
 
             _accounts.Add(account);
             person.AddNewAccount(account);
@@ -102,16 +100,15 @@ namespace Banks.Banks
             return account;
         }
 
-        public Account CreateDepositAccount(Person person, double startBalance, DateTime end)
+        public IAccount CreateDepositAccount(Person person, double startBalance, DateTime end)
         {
-            Account account = Account.CreateBuilder()
-                .SetId(_accountsCounter++)
-                .SetPercent(ChooseDepositPercent(startBalance))
-                .SetMaxTransfer(_maxTransfer)
-                .SetMaxWithdraw(_maxWithdraw)
-                .SetStartBalance(startBalance)
-                .SetAccountPeriod(end)
-                .Build();
+            var account = new DepositAccount(
+                _accountsCounter++,
+                ChooseDepositPercent(startBalance),
+                _maxTransfer,
+                _maxWithdraw,
+                startBalance,
+                end);
 
             _accounts.Add(account);
             person.AddNewAccount(account);
@@ -119,26 +116,15 @@ namespace Banks.Banks
             return account;
         }
 
-        public double ChooseDepositPercent(double balance)
+        public IAccount CreateCreditAccount(Person person, double startBalance)
         {
-            foreach (var pair in _percentsBorders.Where(pair => balance < pair.Value))
-            {
-                return pair.Key;
-            }
-
-            return _percentsBorders.Last().Key;
-        }
-
-        public Account CreateCreditAccount(Person person, double startBalance)
-        {
-            Account account = Account.CreateBuilder()
-                .SetId(_accountsCounter++)
-                .SetMaxTransfer(_maxTransfer)
-                .SetMaxWithdraw(_maxWithdraw)
-                .SetStartBalance(startBalance)
-                .SetCreditLimit(_creditLimit)
-                .SetCommission(_commission)
-                .Build();
+            var account = new CreditAccount(
+                _accountsCounter++,
+                _maxTransfer,
+                _maxWithdraw,
+                startBalance,
+                _creditLimit,
+                _commission);
 
             _accounts.Add(account);
             person.AddNewAccount(account);
@@ -148,11 +134,11 @@ namespace Banks.Banks
 
         public void SetMaxTransfer(double amount)
         {
-            var observers = new List<INotifyObserver>();
-            foreach (Account account in _accounts.Where(account => account.MaxTransfer != 0))
+            var observers = new List<IAccount>();
+            foreach (IAccount account in _accounts.Where(account => account.MaxTransfer != 0))
             {
                 observers.Add(account);
-                account.MaxTransfer = amount;
+                account.SetMaxTransfer(amount);
             }
 
             SendNotify(observers, amount, new TransferLimitMessage());
@@ -160,11 +146,11 @@ namespace Banks.Banks
 
         public void SetMaxWithdraw(double amount)
         {
-            var observers = new List<INotifyObserver>();
-            foreach (Account account in _accounts.Where(account => account.MaxWithdraw != 0))
+            var observers = new List<IAccount>();
+            foreach (IAccount account in _accounts.Where(account => account.MaxWithdraw != 0))
             {
                 observers.Add(account);
-                account.MaxWithdraw = amount;
+                account.SetMaxWithdraw(amount);
             }
 
             SendNotify(observers, amount, new WithdrawLimitMessage());
@@ -172,11 +158,11 @@ namespace Banks.Banks
 
         public void SetCreditLimit(double amount)
         {
-            var observers = new List<INotifyObserver>();
-            foreach (Account account in _accounts.Where(account => account.CreditLimit != 0))
+            var observers = new List<IAccount>();
+            foreach (IAccount account in _accounts.Where(account => account.CreditLimit != 0))
             {
                 observers.Add(account);
-                account.CreditLimit = amount;
+                account.SetCreditLimit(amount);
             }
 
             SendNotify(observers, amount, new CreditLimitMessage());
@@ -184,46 +170,46 @@ namespace Banks.Banks
 
         public void SetPercent(double amount)
         {
-            var observers = new List<INotifyObserver>();
-            foreach (Account account in _accounts.Where(account => account.Percent != 0))
+            var observers = new List<IAccount>();
+            foreach (IAccount account in _accounts.Where(account => account.Percent != 0))
             {
                 observers.Add(account);
-                account.Percent = amount;
+                account.SetPercent(amount);
             }
 
             SendNotify(observers, amount, new PercentMessage());
         }
 
-        public void Replenishment(Account account, double amount)
+        public void Replenishment(IAccount account, double amount)
         {
-            var trans = new ReplenishmentTransaction(account, amount, account.TransactionId++);
+            var trans = new ReplenishmentTransaction(account, amount, account.TransactionId);
             account.AddTransaction(trans);
         }
 
-        public void Withdraw(Account account, double amount)
+        public void Withdraw(IAccount account, double amount)
         {
             if (account.AccountPeriod != DateTime.MinValue && account.AccountPeriod < DateTime.Today)
             {
                 throw new NotEndedDepositAccountException();
             }
 
-            var trans = new WithdrawTransaction(account, amount, account.TransactionId++);
+            var trans = new WithdrawTransaction(account, amount, account.TransactionId);
             account.AddTransaction(trans);
         }
 
-        public void Transfer(Account sender, Account recipient, double amount)
+        public void Transfer(IAccount sender, IAccount recipient, double amount)
         {
             if (sender.AccountPeriod != DateTime.MinValue && sender.AccountPeriod < DateTime.Today)
             {
                 throw new NotEndedDepositAccountException();
             }
 
-            var trans = new TransferTransaction(sender, recipient, amount, sender.TransactionId++);
+            var trans = new TransferTransaction(sender, recipient, amount, sender.TransactionId);
             sender.AddTransaction(trans);
             recipient.AddTransaction(trans);
         }
 
-        public void Cancellation(Account account, Transaction transaction)
+        public void Cancellation(IAccount account, Transaction transaction)
         {
             var trans = new CancelTransaction(transaction);
             account.AddTransaction(trans);
@@ -231,15 +217,20 @@ namespace Banks.Banks
 
         public void UpdateBalance(DateTime dateTime)
         {
-            foreach (Account account in _accounts.Where(account => account.AccountPeriod != DateTime.MinValue))
+            foreach (IAccount account in _accounts.Where(account => account.AccountPeriod != DateTime.MinValue))
             {
                 account.BalanceUpdate(dateTime);
             }
         }
 
-        public ReadOnlyCollection<Account> GetAccounts()
+        public ReadOnlyCollection<IAccount> GetAccounts()
         {
             return _accounts.AsReadOnly();
+        }
+
+        private double ChooseDepositPercent(double balance)
+        {
+            return _percentsBorders.FirstOrDefault(pair => balance < pair.Value).Key;
         }
     }
 }

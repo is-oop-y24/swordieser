@@ -10,9 +10,9 @@ namespace Banks.Banks
 
         private List<Bank> _banks;
 
-        protected CentralBank()
+        protected CentralBank(string name)
         {
-            Name = "Central Bank";
+            Name = name;
             _banks = new List<Bank>();
         }
 
@@ -20,7 +20,7 @@ namespace Banks.Banks
 
         public static CentralBank GetInstance()
         {
-            return instance ??= new CentralBank();
+            return instance ??= new CentralBank("Central Bank");
         }
 
         public Bank CreateBank(
