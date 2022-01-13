@@ -58,6 +58,7 @@ namespace Banks.Accounts
         public void AddTransaction(Transaction t)
         {
             _transactionHistory.Add(t);
+            TransactionId++;
         }
 
         public void BalanceUpdate(DateTime dateTime)

@@ -37,7 +37,7 @@ namespace Banks.Accounts
         public double MaxWithdraw { get; private set; }
         public double MaxTransfer { get; private set; }
         public List<string> MessagesList { get; }
-        public int TransactionId { get; } = 1;
+        public int TransactionId { get; private set; } = 1;
         public DateTime AccountPeriod { get; }
 
         public void Replenishment(double amount)
@@ -58,6 +58,7 @@ namespace Banks.Accounts
         public void AddTransaction(Transaction t)
         {
             _transactionHistory.Add(t);
+            TransactionId++;
         }
 
         public void BalanceUpdate(DateTime dateTime)
