@@ -1,11 +1,10 @@
 ﻿using Banks.Accounts;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
 namespace Banks.Transactions
 {
     public abstract class Transaction
     {
-        public Transaction(Account sender, Account recipient, double amount, int id)
+        protected Transaction(IAccount sender, IAccount recipient, double amount, int id)
         {
             Sender = sender;
             Recipient = recipient;
@@ -13,15 +12,15 @@ namespace Banks.Transactions
             Id = id;
         }
 
-        public Account Sender { get; }
+        public IAccount Sender { get; }
 
-        public Account Recipient { get; }
+        public IAccount Recipient { get; }
 
         public double Amount { get; }
 
         public int Id { get; }
 
-        public bool IsCanceled { get; private set; } = false;
+        public bool IsCanceled { get; private set; }
 
         public void Cancel()
         {

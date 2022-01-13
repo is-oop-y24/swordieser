@@ -1,12 +1,11 @@
-﻿using System;
-using Banks.Accounts;
+﻿using Banks.Accounts;
 using Banks.Exceptions;
 
 namespace Banks.Transactions
 {
     public class WithdrawTransaction : Transaction
     {
-        public WithdrawTransaction(Account sender, double amount, int id, Account recipient = null)
+        public WithdrawTransaction(IAccount sender, double amount, int id, IAccount recipient = null)
             : base(sender, recipient, amount, id)
         {
             if (amount <= 0)

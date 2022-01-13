@@ -1,12 +1,11 @@
-﻿using System;
-using Banks.Accounts;
+﻿using Banks.Accounts;
 using Banks.Exceptions;
 
 namespace Banks.Transactions
 {
     public class TransferTransaction : Transaction
     {
-        public TransferTransaction(Account sender, Account recipient, double amount, int id)
+        public TransferTransaction(IAccount sender, IAccount recipient, double amount, int id)
             : base(sender, recipient, amount, id)
         {
             if (amount <= 0)
