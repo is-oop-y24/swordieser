@@ -20,17 +20,7 @@ namespace Banks.Banks
 
         private readonly List<IAccount> _accounts;
 
-        private readonly double _percent;
-
-        private readonly double _commission;
-
-        private readonly double _creditLimit;
-
-        private readonly double _maxTransfer;
-
-        private readonly double _maxWithdraw;
-
-        private readonly Dictionary<double, double> _percentsBorders;
+        private readonly BankConditions _conditions;
 
         public Bank(
             string name,
@@ -43,12 +33,13 @@ namespace Banks.Banks
         {
             Id = _banksId++;
             Name = name;
-            _percent = percent;
-            _commission = commission;
-            _creditLimit = creditLimit;
-            _maxWithdraw = maxWithdraw;
-            _maxTransfer = maxTransfer;
-            _percentsBorders = percentsBorders;
+            _conditions = new BankConditions(
+                percent,
+                commission,
+                creditLimit,
+                maxTransfer,
+                maxWithdraw,
+                percentsBorders);
             _accounts = new List<IAccount>();
             _observers = new List<IAccount>();
         }
@@ -89,13 +80,12 @@ namespace Banks.Banks
         {
             var account = new DebitAccount(
                 _accountsCounter++,
-                _percent,
-                _maxTransfer,
-                _maxWithdraw,
+                _conditions,
                 startBalance);
 
             _accounts.Add(account);
             person.AddNewAccount(account);
+            person.CheckDoubtfulness();
 
             return account;
         }
@@ -104,14 +94,13 @@ namespace Banks.Banks
         {
             var account = new DepositAccount(
                 _accountsCounter++,
-                ChooseDepositPercent(startBalance),
-                _maxTransfer,
-                _maxWithdraw,
+                _conditions,
                 startBalance,
                 end);
 
             _accounts.Add(account);
             person.AddNewAccount(account);
+            person.CheckDoubtfulness();
 
             return account;
         }
@@ -120,62 +109,40 @@ namespace Banks.Banks
         {
             var account = new CreditAccount(
                 _accountsCounter++,
-                _maxTransfer,
-                _maxWithdraw,
-                startBalance,
-                _creditLimit,
-                _commission);
+                _conditions,
+                startBalance);
 
             _accounts.Add(account);
             person.AddNewAccount(account);
+            person.CheckDoubtfulness();
 
             return account;
         }
 
         public void SetMaxTransfer(double amount)
         {
-            var observers = new List<IAccount>();
-            foreach (IAccount account in _accounts.Where(account => account.MaxTransfer != 0))
-            {
-                observers.Add(account);
-                account.SetMaxTransfer(amount);
-            }
-
+            var observers = _accounts.Where(account => account.MaxTransfer != 0).ToList();
+            _conditions.MaxTransfer = amount;
             SendNotify(observers, amount, new TransferLimitMessage());
         }
 
         public void SetMaxWithdraw(double amount)
         {
-            var observers = new List<IAccount>();
-            foreach (IAccount account in _accounts.Where(account => account.MaxWithdraw != 0))
-            {
-                observers.Add(account);
-                account.SetMaxWithdraw(amount);
-            }
-
+            var observers = _accounts.Where(account => account.MaxWithdraw != 0).ToList();
+            _conditions.MaxWithdraw = amount;
             SendNotify(observers, amount, new WithdrawLimitMessage());
         }
 
         public void SetCreditLimit(double amount)
         {
-            var observers = new List<IAccount>();
-            foreach (IAccount account in _accounts.Where(account => account.CreditLimit != 0))
-            {
-                observers.Add(account);
-                account.SetCreditLimit(amount);
-            }
+            var observers = _accounts.Where(account => account.CreditLimit != 0).ToList();
 
             SendNotify(observers, amount, new CreditLimitMessage());
         }
 
         public void SetPercent(double amount)
         {
-            var observers = new List<IAccount>();
-            foreach (IAccount account in _accounts.Where(account => account.Percent != 0))
-            {
-                observers.Add(account);
-                account.SetPercent(amount);
-            }
+            var observers = _accounts.Where(account => account.Percent != 0).ToList();
 
             SendNotify(observers, amount, new PercentMessage());
         }
@@ -209,7 +176,7 @@ namespace Banks.Banks
             recipient.AddTransaction(trans);
         }
 
-        public void Cancellation(IAccount account, Transaction transaction)
+        public void Cancellation(IAccount account, ITransaction transaction)
         {
             var trans = new CancelTransaction(transaction);
             account.AddTransaction(trans);
@@ -228,9 +195,9 @@ namespace Banks.Banks
             return _accounts.AsReadOnly();
         }
 
-        private double ChooseDepositPercent(double balance)
+        public BankConditions GetConditions()
         {
-            return _percentsBorders.FirstOrDefault(pair => balance < pair.Value).Key;
+            return _conditions;
         }
     }
 }
