@@ -13,12 +13,13 @@ namespace Banks
         private static void Main()
         {
             string interfaceType;
-            CentralBank centralBank;
+            CentralBank centralBank = CentralBank.GetInstance();
             var clients = new List<Person>();
+            ChooseInterfaceType();
 
             void ChooseInterfaceType()
             {
-                Console.WriteLine("Choose your fighter\n1.manager\n2.client\n3.stop): ");
+                Console.WriteLine("Choose your fighter\n1.manager\n2.client\n3.stop");
                 interfaceType = Console.ReadLine();
                 InterfaceType();
             }
@@ -58,7 +59,7 @@ namespace Banks
                             for (int i = 0; i < amount; i++)
                             {
                                 double depositPercent = Convert.ToDouble(Console.ReadLine());
-                                double upperBound = Convert.ToInt32(Console.ReadLine());
+                                double upperBound = Convert.ToDouble(Console.ReadLine());
                                 borders.Add(depositPercent, upperBound);
                             }
 
@@ -96,8 +97,6 @@ namespace Banks
                             Console.WriteLine("Try again");
                             continue;
                     }
-
-                    break;
                 }
             }
 
@@ -297,7 +296,7 @@ namespace Banks
                                 foreach (IAccount account in client.GetAccounts()
                                     .Where(account => account.Id == transId))
                                 {
-                                    foreach (Transaction transaction in account.GetTransactionsHistory())
+                                    foreach (ITransaction transaction in account.GetTransactionsHistory())
                                     {
                                         Console.WriteLine($"Transaction id: {transaction.Id}");
                                         if (transaction.Sender != null)
@@ -329,7 +328,7 @@ namespace Banks
                                 {
                                     Console.WriteLine("Type the id of the transaction");
                                     int transCancelId = Convert.ToInt32(Console.ReadLine());
-                                    foreach (Transaction transaction in account.GetTransactionsHistory()
+                                    foreach (ITransaction transaction in account.GetTransactionsHistory()
                                         .Where(trans => trans.Id == transCancelId))
                                     {
                                         foreach (Bank bank in centralBank.GetBanks()
@@ -351,8 +350,6 @@ namespace Banks
                             Console.WriteLine("Try again");
                             continue;
                     }
-
-                    break;
                 }
             }
 
