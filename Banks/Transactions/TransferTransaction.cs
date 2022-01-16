@@ -3,11 +3,14 @@ using Banks.Exceptions;
 
 namespace Banks.Transactions
 {
-    public class TransferTransaction : Transaction
+    public class TransferTransaction : ITransaction
     {
         public TransferTransaction(IAccount sender, IAccount recipient, double amount, int id)
-            : base(sender, recipient, amount, id)
         {
+            Recipient = recipient;
+            Sender = sender;
+            Amount = amount;
+            Id = id;
             if (amount <= 0)
             {
                 throw new InvalidTransactionAmountException();
@@ -27,6 +30,24 @@ namespace Banks.Transactions
 
             sender.Withdraw(amount);
             recipient.Replenishment(amount);
+        }
+
+        public IAccount Sender { get; }
+        public IAccount Recipient { get; }
+        public double Amount { get; }
+        public int Id { get; }
+        public bool IsCanceled { get; private set; }
+
+        public void Cancel()
+        {
+            if (IsCanceled)
+            {
+                throw new AlreadyCanceledTransactionException();
+            }
+
+            Sender.Replenishment(Amount);
+            Recipient.Withdraw(Amount);
+            IsCanceled = true;
         }
     }
 }

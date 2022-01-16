@@ -3,10 +3,9 @@ using Banks.Exceptions;
 
 namespace Banks.Transactions
 {
-    public class WithdrawTransaction : Transaction
+    public class WithdrawTransaction : ITransaction
     {
         public WithdrawTransaction(IAccount sender, double amount, int id, IAccount recipient = null)
-            : base(sender, recipient, amount, id)
         {
             if (amount <= 0)
             {
@@ -26,6 +25,23 @@ namespace Banks.Transactions
             }
 
             sender.Withdraw(amount);
+        }
+
+        public IAccount Sender { get; }
+        public IAccount Recipient { get; }
+        public double Amount { get; }
+        public int Id { get; }
+        public bool IsCanceled { get; private set; }
+
+        public void Cancel()
+        {
+            if (IsCanceled)
+            {
+                throw new AlreadyCanceledTransactionException();
+            }
+
+            Sender.Replenishment(Amount);
+            IsCanceled = true;
         }
     }
 }
