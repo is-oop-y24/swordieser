@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Banks.Banks;
 using Banks.Transactions;
 
 namespace Banks.Accounts
 {
     public interface IAccount
     {
+        public BankConditions Conditions { get; }
         public long Id { get; }
         public double Balance { get; }
         public double Percent { get; }
@@ -23,13 +25,10 @@ namespace Banks.Accounts
         public void Replenishment(double amount);
         public void Withdraw(double amount);
         public void Update(string message);
-        public void AddTransaction(Transaction t);
+        public void AddTransaction(ITransaction t);
         public void BalanceUpdate(DateTime dateTime);
-        public ReadOnlyCollection<Transaction> GetTransactionsHistory();
+        public ReadOnlyCollection<ITransaction> GetTransactionsHistory();
 
-        public void SetPercent(double amount);
-        public void SetCommission(double amount);
-        public void SetCreditLimit(double amount);
         public void SetMaxWithdraw(double amount);
         public void SetMaxTransfer(double amount);
     }

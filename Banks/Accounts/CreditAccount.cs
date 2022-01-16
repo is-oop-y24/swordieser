@@ -1,37 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Banks.Banks;
 using Banks.Transactions;
 
 namespace Banks.Accounts
 {
     public class CreditAccount : IAccount
     {
-        private readonly List<Transaction> _transactionHistory;
+        private readonly List<ITransaction> _transactionHistory;
 
         public CreditAccount(
             long id,
-            double maxTransfer,
-            double maxWithdraw,
-            double startBalance,
-            double creditLimit,
-            double commission)
+            BankConditions conditions,
+            double startBalance)
         {
             Id = id;
-            MaxTransfer = maxTransfer;
-            MaxWithdraw = maxWithdraw;
+            MaxTransfer = conditions.MaxTransfer;
+            MaxWithdraw = conditions.MaxWithdraw;
             Balance = startBalance;
-            CreditLimit = creditLimit;
-            Commission = commission;
-            _transactionHistory = new List<Transaction>();
+            CreditLimit = conditions.CreditLimit;
+            Commission = conditions.Commission;
+            _transactionHistory = new List<ITransaction>();
             MessagesList = new List<string>();
+            Conditions = conditions;
         }
 
+        public BankConditions Conditions { get; }
         public long Id { get; }
         public double Balance { get; private set; }
         public double Percent { get; }
         public double Commission { get; private set; }
         public double CreditLimit { get; private set; }
+
         public double MonthlyPercentage { get; private set; }
         public double MonthlyCommission { get; private set; }
         public double MaxWithdraw { get; private set; }
@@ -55,7 +56,7 @@ namespace Banks.Accounts
             MessagesList.Add(message);
         }
 
-        public void AddTransaction(Transaction t)
+        public void AddTransaction(ITransaction t)
         {
             _transactionHistory.Add(t);
             TransactionId++;
@@ -82,23 +83,9 @@ namespace Banks.Accounts
             }
         }
 
-        public ReadOnlyCollection<Transaction> GetTransactionsHistory()
+        public ReadOnlyCollection<ITransaction> GetTransactionsHistory()
         {
             return _transactionHistory.AsReadOnly();
-        }
-
-        public void SetPercent(double amount)
-        {
-        }
-
-        public void SetCommission(double amount)
-        {
-            Commission = amount;
-        }
-
-        public void SetCreditLimit(double amount)
-        {
-            CreditLimit = amount;
         }
 
         public void SetMaxWithdraw(double amount)

@@ -2,31 +2,32 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Banks.Banks;
 using Banks.Transactions;
 
 namespace Banks.Accounts
 {
     public class DebitAccount : IAccount
     {
-        private readonly List<Transaction> _transactionHistory;
+        private readonly List<ITransaction> _transactionHistory;
 
         public DebitAccount(
             long id,
-            double percent,
-            double maxTransfer,
-            double maxWithdraw,
+            BankConditions conditions,
             double startBalance)
         {
             Id = id;
-            Percent = percent;
-            MaxTransfer = maxTransfer;
-            MaxWithdraw = maxWithdraw;
+            Percent = conditions.Percent;
+            MaxTransfer = conditions.MaxTransfer;
+            MaxWithdraw = conditions.MaxWithdraw;
             Balance = startBalance;
             MessagesList = new List<string>();
-            _transactionHistory = new List<Transaction>();
+            _transactionHistory = new List<ITransaction>();
             AccountPeriod = DateTime.MinValue;
+            Conditions = conditions;
         }
 
+        public BankConditions Conditions { get; }
         public long Id { get; }
         public double Balance { get; private set; }
         public double Percent { get; private set; }
@@ -55,7 +56,7 @@ namespace Banks.Accounts
             MessagesList.Add(message);
         }
 
-        public void AddTransaction(Transaction t)
+        public void AddTransaction(ITransaction t)
         {
             _transactionHistory.Add(t);
             TransactionId++;
@@ -96,22 +97,9 @@ namespace Banks.Accounts
             }
         }
 
-        public ReadOnlyCollection<Transaction> GetTransactionsHistory()
+        public ReadOnlyCollection<ITransaction> GetTransactionsHistory()
         {
             return _transactionHistory.AsReadOnly();
-        }
-
-        public void SetPercent(double amount)
-        {
-            Percent = amount;
-        }
-
-        public void SetCommission(double amount)
-        {
-        }
-
-        public void SetCreditLimit(double amount)
-        {
         }
 
         public void SetMaxWithdraw(double amount)

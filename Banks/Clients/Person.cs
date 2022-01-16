@@ -13,6 +13,7 @@ namespace Banks.Clients
         public Person(string name, string surname, string address, long passport)
         {
             _accounts = new List<IAccount>();
+            Doubtful = true;
             Name = name;
             Surname = surname;
             Address = address;
@@ -28,7 +29,7 @@ namespace Banks.Clients
 
         private long Passport { get; set; }
 
-        private bool Doubtful { get;  set; } = true;
+        private bool Doubtful { get;  set; }
 
         public void AddNewAccount(IAccount account)
         {
@@ -61,7 +62,6 @@ namespace Banks.Clients
                 {
                     account.SetMaxWithdraw(0);
                     account.SetMaxTransfer(0);
-                    Doubtful = false;
                 }
             }
         }
