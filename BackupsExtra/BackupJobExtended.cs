@@ -44,15 +44,30 @@ namespace BackupsExtra
             if (first.GetRepositories().Count > 1 && second.GetRepositories().Count > 1)
             {
                 var filesToAdd = new List<Repository>();
+                bool exist = false;
                 foreach (Repository repo in first.GetRepositories())
                 {
-                    if (!second.GetRepositories().Contains(repo))
+                    foreach (FileInfo file in repo.GetFiles())
                     {
-                        filesToAdd.Add(repo);
-                    }
+                        foreach (Repository repo2 in second.GetRepositories())
+                        {
+                            foreach (FileInfo file2 in repo2.GetFiles())
+                            {
+                                if (file2.Name == file.Name)
+                                {
+                                    exist = true;
+                                }
+                            }
+                        }
 
-                    BackupSaver.Save(second, filesToAdd);
+                        if (!exist)
+                        {
+                            filesToAdd.Add(repo);
+                        }
+                    }
                 }
+
+                BackupSaver.Save(second, filesToAdd);
             }
 
             RestorePoints.Remove(first);
