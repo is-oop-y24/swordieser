@@ -20,7 +20,7 @@ namespace BackupsExtra.Cleaners
         {
             var deletePoints = restorePoints.Where(rp => rp.CreationTime < Limit).ToList();
             if (deletePoints.Count == 0)
-                throw new NoRestorePointsToDelete();
+                throw new NoRestorePointsToDeleteException();
 
             if (deletePoints.Count == restorePoints.Count)
                 throw new DeletingAllRestorePointsException();

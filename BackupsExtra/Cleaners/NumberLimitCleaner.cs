@@ -25,7 +25,7 @@ namespace BackupsExtra.Cleaners
                 deletePoints = restorePoints.Take(restorePoints.Count - Limit).ToList();
 
             if (deletePoints.Count == 0)
-                throw new NoRestorePointsToDelete();
+                throw new NoRestorePointsToDeleteException();
 
             return deletePoints;
         }

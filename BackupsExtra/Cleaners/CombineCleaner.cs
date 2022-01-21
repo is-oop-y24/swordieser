@@ -37,7 +37,7 @@ namespace BackupsExtra.Cleaners
                 : deleteByTime.Union(deleteByNumber).ToList();
 
             if (deletePoints.Count == 0)
-                throw new NoRestorePointsToDelete();
+                throw new NoRestorePointsToDeleteException();
 
             if (deletePoints.Count == restorePoints.Count)
                 throw new DeletingAllRestorePointsException();
